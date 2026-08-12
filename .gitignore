@@ -1,3 +1,5 @@
+data/
 data/Music_Info.csv
 data/User_Listening_History.csv
 data/...
+/transformer.joblib

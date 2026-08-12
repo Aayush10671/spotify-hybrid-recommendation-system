@@ -1,6 +1,9 @@
 import pandas as pd
+from pathlib import Path
 
-data_path = "../data/Music_Info"
+PROJECT_ROOT = Path(__file__).resolve().parent
+data_path = PROJECT_ROOT / "data" / "Music_Info.csv"
+output_path = PROJECT_ROOT / "data" / "cleaned_data.csv"
 
 def clean_data(data):
 
@@ -16,16 +19,19 @@ def clean_data(data):
 
 
 def data_for_content_filtering(data):
+    columns_to_drop = ['track_id', 'name', 'spotify_preview_url']
 
-     return (data.drop(columns = ['track_id','name','spotify_preview']))
-
+    return data.drop(
+        columns=columns_to_drop,
+        errors='ignore'
+    )
 
 def main(data_path):
      data = pd.read_csv(data_path)
 
-     cleaned_data = clean_data(data_path)
+     cleaned_data = clean_data(data)
 
-     cleaned_data.to_csv("data/cleaned_data.csv",index = False)
+     cleaned_data.to_csv(output_path,index = False)
 
 
 if __name__ == "__main__":
