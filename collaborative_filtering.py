@@ -3,12 +3,13 @@ import dask.dataframe as dd
 from scipy.sparse import csr_matrix, save_npz
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-
-track_ids_save_path = "data/track_ids.npy"
-filtered_data_save_path = "data/collab_filtered_data.csv"
-interaction_matrix_save_path = "data/interaction_matrix.npz"
-songs_data_path = "../data/cleaned_data.csv"
-user_listening_history_data_path = "../data/User_Listening_History.csv"
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+track_ids_save_path = os.path.join(BASE_DIR, "data/track_ids.npy")
+filtered_data_save_path = os.path.join(BASE_DIR, "data/collab_filtered_data.csv")
+interaction_matrix_save_path = os.path.join(BASE_DIR, "data/interaction_matrix.npz")
+songs_data_path = os.path.join(BASE_DIR, "data/cleaned_data.csv")  # Adjust as needed
+user_listening_history_data_path = os.path.join(BASE_DIR, "data/User_Listening_History.csv")
 
 
 def filter_songs_data(songs_data: pd.DataFrame, track_ids: list, save_df_path: str) -> pd.DataFrame:
