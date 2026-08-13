@@ -71,7 +71,7 @@ def calculate_similarity_score(input_vector , data):
 
 
 
-def recommend(song_name,songs_data,transformed_data,k):
+def recommend(song_name,artist_name,songs_data,transformed_data,k):
 
     song_row = songs_data.loc[songs_data['name'] == song_name.lower(),:]
     
@@ -80,7 +80,7 @@ def recommend(song_name,songs_data,transformed_data,k):
 
     else:
         song_name = song_name.lower().strip()
-        song_row = songs_data.loc[songs_data['name'] == song_name]
+        song_row = songs_data.loc[(songs_data["name"] == song_name) & (songs_data["artist"] == artist_name)]
         song_index = song_row.index[0]
 
         input_vector = transformed_data[song_index].reshape(1,-1)

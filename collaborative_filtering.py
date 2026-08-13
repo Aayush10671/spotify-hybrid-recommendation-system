@@ -4,6 +4,7 @@ from scipy.sparse import csr_matrix, save_npz
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import os
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 track_ids_save_path = os.path.join(BASE_DIR, "data/track_ids.npy")
 filtered_data_save_path = os.path.join(BASE_DIR, "data/collab_filtered_data.csv")
@@ -13,13 +14,9 @@ user_listening_history_data_path = os.path.join(BASE_DIR, "data/User_Listening_H
 
 
 def filter_songs_data(songs_data: pd.DataFrame, track_ids: list, save_df_path: str) -> pd.DataFrame:
-    # filter data based on track_ids
     filtered_data = songs_data[songs_data["track_id"].isin(track_ids)]
-    # sort the data by track id
     filtered_data.sort_values(by="track_id", inplace=True)
-    # rest index
     filtered_data.reset_index(drop=True, inplace=True)
-    # save the data
     save_pandas_data_to_csv(filtered_data, save_df_path)
     
     return filtered_data
@@ -81,7 +78,7 @@ def create_interaction_matrix(history_data:dd.DataFrame, track_ids_save_path, sa
     save_sparse_matrix(interaction_matrix, save_matrix_path)
     
     
-def collaborative_recommendation(song_name,artist_name,track_ids,songs_data,interaction_matrix,k=5):
+def collaborative_recommendation(song_name,artist_name,track_ids,songs_data,interaction_matrix,k):
     # lowercase the song name
     song_name = song_name.lower()
     
@@ -90,9 +87,17 @@ def collaborative_recommendation(song_name,artist_name,track_ids,songs_data,inte
     
     # fetch the row from songs data
     song_row = songs_data.loc[(songs_data["name"] == song_name) & (songs_data["artist"] == artist_name)]
-   
-    # track_id of input song
-    input_track_id = song_row['track_id'].values.item()
+
+    if song_row.empty:
+        # song exists in the full catalog but has no listening-history data,
+        # so it never made it into collab_filtered_data.csv / interaction_matrix
+        raise ValueError(
+            f"'{song_name}' by '{artist_name}' has no listening-history data, "
+            "so collaborative filtering can't be used for it. Try content-based filtering instead."
+        )
+
+    # track_id of input song (use first match in case of duplicate rows)
+    input_track_id = song_row['track_id'].values[0]
   
     # index value of track_id
     ind = np.where(track_ids == input_track_id)[0].item()
