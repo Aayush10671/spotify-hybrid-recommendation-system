@@ -199,7 +199,7 @@ from hybrid_recommendation import HybridRecommenderSystem as hrs
 # Page config — must be the first Streamlit command
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Spotify Songs Recommender",
+    page_title=" Songs Recommender System",
     page_icon="🎧",
     layout="centered",
 )
@@ -460,7 +460,7 @@ st.session_state.track_ids = (
 st.markdown("""
 <div class="hero-wrap">
     <div class="hero-eyebrow">🎧 Discover something new</div>
-    <div class="hero-title">Spotify <span>Songs</span> Recommender</div>
+    <div class="hero-title">Songs <span>Recommender</span> System</div>
     <div class="hero-sub">Tell us a track you love, and we'll line up what to play next.</div>
 </div>
 """, unsafe_allow_html=True)
