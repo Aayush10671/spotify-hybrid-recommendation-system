@@ -1,7 +1,5 @@
 name: CI-CD
 
-
-
 on: push
 
 jobs:
@@ -25,15 +23,15 @@ jobs:
       - name: configure aws credential
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}     
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }} 
           aws-region: us-east-1
 
       - name: DVC pull
         run: |
           dvc pull
       
-      - name: Run appilication
+      - name: Run application
         run: |
           nohup streamlit run app.py --server.port 8000 & sleep 30
 
@@ -44,5 +42,3 @@ jobs:
       - name: stop streamlit app
         run: |
           pkill -f "streamlit run"
-
-      
