@@ -19,6 +19,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install dvc[s3]
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -27,9 +28,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Verify AWS Access
+        run: |
+          aws sts get-caller-identity
+
       - name: DVC Pull
         run: |
-          dvc pull
+          dvc pull -v
 
       - name: Run Appllication
         run: |
