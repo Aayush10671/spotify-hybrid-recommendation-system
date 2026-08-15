@@ -24,9 +24,10 @@ jobs:
 
       - name: configure aws credential
         uses: aws-actions/configure-aws-credentials@v4
-        aws-access-key: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-key: ${{ secrets.AWS_SECRET_KEY}}
-        aws-region: us-east-1
+        with:
+          aws-access-key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_SECRET_KEY}}
+          aws-region: us-east-1
 
       - name: DVC pull
         run: |
