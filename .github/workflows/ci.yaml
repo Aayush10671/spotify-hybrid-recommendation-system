@@ -44,3 +44,27 @@ jobs:
       - name: Stop Streamlit app
         run: |
           pkill -f "streamlit run"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: login to AWS ECR
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 385105852594.dkr.ecr.us-east-1.amazonaws.com
+      - name: Build docker image
+        run: |
+          docker build -t songs_hybrid_reco_sys .
+
+      - name: Tag docker image
+        run: |
+          docker tag songs_hybrid_reco_sys:latest 385105852594.dkr.ecr.us-east-1.amazonaws.com/songs_hybrid_reco_sys:latest
+
+      - name: Push docker image to ECR
+        run: |
+          docker push 385105852594.dkr.ecr.us-east-1.amazonaws.com/songs_hybrid_reco_sys:latest
