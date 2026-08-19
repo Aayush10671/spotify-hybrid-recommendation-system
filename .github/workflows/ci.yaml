@@ -69,7 +69,6 @@ jobs:
       - name: Push docker image to ECR
         run: |
           docker push 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
-
       - name: Deploy to AWS EC2
         if: success()
         uses: appleboy/ssh-action@v0.1.5
@@ -82,7 +81,8 @@ jobs:
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws configure set default.region ap-south-1
             aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 385105852594.dkr.ecr.ap-south-1.amazonaws.com
-            docker pull 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
             docker stop songs_reco_app || true
             docker rm songs_reco_app || true
+            docker system prune -af --volumes
+            docker pull 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
             docker run -d --name songs_reco_app -p 80:8000 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
