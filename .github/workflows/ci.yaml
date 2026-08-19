@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip' 
+          cache: 'pip'
 
       - name: Install Packages
         run: |
@@ -35,12 +35,12 @@ jobs:
       - name: Run Appllication
         run: |
           nohup streamlit run app.py --server.port 8000 &
-          sleep 30 
+          sleep 30
 
       - name: Test App
         run: |
           pytest test_app.py
-      
+
       - name: Stop Streamlit app
         run: |
           pkill -f "streamlit run"
@@ -57,9 +57,10 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 385105852594.dkr.ecr.ap-south-1.amazonaws.com
+
       - name: Build docker image
         run: |
-          docker build -t songs_hybrid_reco_sys .
+          docker build -t songs_reco_sys:latest .
 
       - name: Tag docker image
         run: |
@@ -69,12 +70,11 @@ jobs:
         run: |
           docker push 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
 
-
       - name: Deploy to AWS EC2
         if: success()
         uses: appleboy/ssh-action@v0.1.5
         with:
-          host: ${{ secrets.EC2_HOST}}
+          host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
@@ -82,10 +82,7 @@ jobs:
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws configure set default.region ap-south-1
             aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 385105852594.dkr.ecr.ap-south-1.amazonaws.com
-            docker push 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
-            docker stop songs_reco_sys || true
-            docker rm songs_reco_sys || true
+            docker pull 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
+            docker stop songs_reco_app || true
+            docker rm songs_reco_app || true
             docker run -d --name songs_reco_app -p 80:8000 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
-            
-
-      
