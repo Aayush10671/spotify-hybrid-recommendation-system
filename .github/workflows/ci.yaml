@@ -60,7 +60,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build -t songs_reco_sys:latest .
+          docker build -t songs_reco_sys .
 
       - name: Tag docker image
         run: |
@@ -68,7 +68,7 @@ jobs:
 
       - name: Push docker image to ECR
         run: |
-          docker push 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
+         docker push 385105852594.dkr.ecr.ap-south-1.amazonaws.com/songs_reco_sys:latest
       - name: Deploy to AWS EC2
         if: success()
         uses: appleboy/ssh-action@v0.1.5
